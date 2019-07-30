@@ -2,6 +2,7 @@
 #include <limits>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #define CATCH_CONFIG_MAIN
 
@@ -18,13 +19,12 @@ using std::max;
 using std::string;
 
 matrix<int> make_matrix(vector<vector<int>> values) {
-    auto size1 = values.size();
-    auto size2 = values[0].size();
-    auto the_matrix = matrix<int>(size1, size2);
+    auto the_matrix = matrix<int>(values.size(), values[0].size());
 
-    for (unsigned long row = 0; row < size1; ++row)
-        for (unsigned long col = 0; col < size2; ++col)
-            the_matrix(row, col) = values[row][col];
+    // Copy 'values' into 'the_matrix', one row at a time
+    auto iter1 = the_matrix.begin1();
+    for (auto values_iter = values.begin(); values_iter != values.end(); ++values_iter, ++iter1)
+        std::copy(values_iter->begin(), values_iter->end(), iter1.begin());
 
     return the_matrix;
 }
@@ -32,10 +32,9 @@ matrix<int> make_matrix(vector<vector<int>> values) {
 matrix<int> make_matrix(int size1, int size2, int value) {
     auto the_matrix = matrix<int>(size1, size2);
 
-    // Fancier, do it with an interator
-    for (unsigned long row = 0; row < size1; ++row)
-        for (unsigned long col = 0; col < size2; ++col)
-            the_matrix(row, col) = value;
+    for (auto iter1 = the_matrix.begin1(); iter1 != the_matrix.end1(); ++iter1)
+        for (auto iter2 = iter1.begin(); iter2 != iter1.end(); ++iter2)
+            *iter2 = value;
 
     return the_matrix;
 }
@@ -71,10 +70,32 @@ int manhattan_tourist(const matrix<int> &down, const matrix<int> &right) {
     return dp(n, m);
 }
 
-TEST_CASE("align") {
-    REQUIRE(dp_change(40, {50, 25, 20, 10, 5, 1}) == 2);
-    REQUIRE(dp_change(19415, {18, 16, 7, 5, 3, 1}) == 1080);
-    REQUIRE(dp_change(16042, {16, 13, 11, 8, 7, 5, 3, 1}) == 1003);
+TEST_CASE("make_matrix") {
+    matrix<int> down = make_matrix({{1, 0, 2, 4, 3},
+                                    {4, 6, 5, 2, 1},
+                                    {4, 4, 5, 2, 1},
+                                    {5, 6, 8, 5, 3}});
+
+    // By row...
+    vector<int> by_row;
+    for (auto iter1 = down.begin1(); iter1 != down.end1(); ++iter1)
+        for (auto iter2 = iter1.begin(); iter2 != iter1.end(); ++iter2)
+            by_row.emplace_back(*iter2);
+    REQUIRE(by_row == vector<int>({1, 0, 2, 4, 3, 4, 6, 5, 2, 1, 4, 4, 5, 2, 1, 5, 6, 8, 5, 3}));
+
+    // By column...
+    vector<int> by_column;
+    for (auto iter2 = down.begin2(); iter2 != down.end2(); ++iter2)
+        for (auto iter1 = iter2.begin(); iter1 != iter2.end(); ++iter1)
+            by_column.emplace_back(*iter1);
+    REQUIRE(by_column == vector<int>({1, 4, 4, 5, 0, 6, 4, 6, 2, 5, 5, 8, 4, 2, 2, 5, 3, 1, 1, 3}));
+
+    auto the_matrix = make_matrix(3, 4, -1);
+    REQUIRE(the_matrix.size1() == 3);
+    REQUIRE(the_matrix.size2() == 4);
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 4; ++j)
+            REQUIRE(the_matrix(i, j) == -1);
 
 }
 
@@ -83,6 +104,17 @@ TEST_CASE("manhattan_tourist") {
                                     {4, 6, 5, 2, 1},
                                     {4, 4, 5, 2, 1},
                                     {5, 6, 8, 5, 3}});
+
+    /*cout << endl;
+    for (auto iter1 = down.begin1(); iter1 != down.end1(); ++iter1)
+        for (auto iter2 = iter1.begin(); iter2 != iter1.end(); ++iter2)
+            cout << *iter2 << " ";
+
+    cout << endl;
+    for (auto iter2 = down.begin2(); iter2 != down.end2(); ++iter2)
+        for (auto iter1 = iter2.begin(); iter1 != iter2.end(); ++iter1)
+            cout << *iter1 << " "; */
+
     matrix<int> right = make_matrix({{3, 2, 4, 0},
                                      {3, 2, 4, 2},
                                      {0, 7, 3, 3},
@@ -152,7 +184,7 @@ string longest_common_string(const string &string1, const string &string2) {
 
     matrix<Direction> path(size1 + 1, size2 + 1);
     auto dp = make_matrix(size1 + 1, size2 + 1, std::numeric_limits<int>::max());
-    // dp(0,0) = 0;
+
     // 'i' is row index (corresponding to string1) and 'j' is column index (corresponding to string2).
 
     dp(0, 0) = 0;
@@ -196,11 +228,9 @@ string longest_common_string(const string &string1, const string &string2) {
     while (i != 0 or j != 0) {
         switch (path(i, j)) {
             case down:
-                // result.insert(begin(result), string1.at(i-1));
                 --i;
                 break;
             case right:
-                // result.insert(begin(result), string2.at(j-1));
                 --j;
                 break;
             case diagonal:
@@ -217,6 +247,13 @@ string longest_common_string(const string &string1, const string &string2) {
         }
     }
     return result;
+}
+
+TEST_CASE("align") {
+    REQUIRE(dp_change(40, {50, 25, 20, 10, 5, 1}) == 2);
+    REQUIRE(dp_change(19415, {18, 16, 7, 5, 3, 1}) == 1080);
+    REQUIRE(dp_change(16042, {16, 13, 11, 8, 7, 5, 3, 1}) == 1003);
+
 }
 
 TEST_CASE("longest_common_string") {

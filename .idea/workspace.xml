@@ -12,9 +12,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0afd8cff-6e0d-491f-b782-dad62f4fedcf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/chapter05/scratch.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chapter05/align.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/chapter05/align.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -73,6 +71,9 @@
       </method>
     </configuration>
   </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR" />
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -92,7 +93,7 @@
       <workItem from="1564394653405" duration="11042000" />
       <workItem from="1564428608016" duration="1925000" />
       <workItem from="1564466985991" duration="77000" />
-      <workItem from="1564483659145" duration="5128000" />
+      <workItem from="1564483659145" duration="13975000" />
     </task>
     <servers />
   </component>

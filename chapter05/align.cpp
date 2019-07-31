@@ -1,8 +1,6 @@
 #include <vector>
 #include <limits>
-#include <iostream>
 #include <string>
-#include <algorithm>
 #include <utility>
 #include <unordered_map>
 #include <boost/functional/hash.hpp>
@@ -11,7 +9,6 @@
 
 #include "../include/catch.hpp"
 #include "boost/numeric/ublas/matrix.hpp"
-#include "boost/numeric/ublas/io.hpp"
 
 using std::vector;
 using boost::numeric::ublas::matrix;
@@ -22,6 +19,7 @@ using std::max;
 using std::string;
 using std::pair, std::make_pair;
 using std::unordered_map;
+using std::numeric_limits;
 
 enum Direction {
     undefined, right, down, diagonal
@@ -52,7 +50,7 @@ int dp_change(int money, const vector<int> &coins) {
     vector<int> min_num_coins = vector<int>(money + 1);
 
     for (int m = 1; m <= money + 1; ++m) {
-        min_num_coins[m] = std::numeric_limits<int>::max();
+        min_num_coins[m] = numeric_limits<int>::max();
         for (auto denomination: coins) {
             if (m < denomination)
                 continue;
@@ -94,7 +92,7 @@ string longest_common_string(const string &string1, const string &string2) {
     int size2 = size(string2);
 
     matrix<Direction> path(size1 + 1, size2 + 1);
-    auto dp = make_matrix(size1 + 1, size2 + 1, std::numeric_limits<int>::max());
+    auto dp = make_matrix(size1 + 1, size2 + 1, numeric_limits<int>::max());
 
     // 'i' is row index (corresponding to string1) and 'j' is column index (corresponding to string2).
 
@@ -182,6 +180,31 @@ pair<string, matrix<int>> get_blosum62() {
                                    {0,  -1, -3, -2, -1, -3, -3, 3,  -2, 1,  1,  -3, -2, -2, -3, -2, 0,  4,  -3, -1},
                                    {-3, -2, -4, -3, 1,  -2, -2, -3, -3, -2, -1, -4, -4, -2, -3, -3, -2, -3, 11, 2},
                                    {-2, -2, -3, -2, 3,  -3, 2,  -1, -2, -1, -1, -2, -3, -1, -2, -2, -2, -1, 2,  7}});
+
+    return make_pair<string, matrix<int>>("ACDEFGHIKLMNPQRSTVWY", std::move(the_matrix));
+}
+
+pair<string, matrix<int>> get_pam250() {
+    auto the_matrix = make_matrix({{2,  -2, 0,  0,  -3, 1,  -1, -1, -1, -2, -1, 0,  1,  0,  -2, 1,  1,  0,  -6, -3},
+                                   {-2, 12, -5, -5, -4, -3, -3, -2, -5, -6, -5, -4, -3, -5, -4, 0,  -2, -2, -8, 0},
+                                   {0,  -5, 4,  3,  -6, 1,  1,  -2, 0,  -4, -3, 2,  -1, 2,  -1, 0,  0,  -2, -7, -4},
+                                   {0,  -5, 3,  4,  -5, 0,  1,  -2, 0,  -3, -2, 1,  -1, 2,  -1, 0,  0,  -2, -7, -4},
+                                   {-3, -4, -6, -5, 9,  -5, -2, 1,  -5, 2,  0,  -3, -5, -5, -4, -3, -3, -1, 0,  7},
+                                   {1,  -3, 1,  0,  -5, 5,  -2, -3, -2, -4, -3, 0,  0,  -1, -3, 1,  0,  -1, -7, -5},
+                                   {-1, -3, 1,  1,  -2, -2, 6,  -2, 0,  -2, -2, 2,  0,  3,  2,  -1, -1, -2, -3, 0},
+                                   {-1, -2, -2, -2, 1,  -3, -2, 5,  -2, 2,  2,  -2, -2, -2, -2, -1, 0,  4,  -5, -1},
+                                   {-1, -5, 0,  0,  -5, -2, 0,  -2, 5,  -3, 0,  1,  -1, 1,  3,  0,  0,  -2, -3, -4},
+                                   {-2, -6, -4, -3, 2,  -4, -2, 2,  -3, 6,  4,  -3, -3, -2, -3, -3, -2, 2,  -2, -1},
+                                   {-1, -5, -3, -2, 0,  -3, -2, 2,  0,  4,  6,  -2, -2, -1, 0,  -2, -1, 2,  -4, -2},
+                                   {0,  -4, 2,  1,  -3, 0,  2,  -2, 1,  -3, -2, 2,  0,  1,  0,  1,  0,  -2, -4, -2},
+                                   {1,  -3, -1, -1, -5, 0,  0,  -2, -1, -3, -2, 0,  6,  0,  0,  1,  0,  -1, -6, -5},
+                                   {0,  -5, 2,  2,  -5, -1, 3,  -2, 1,  -2, -1, 1,  0,  4,  1,  -1, -1, -2, -5, -4},
+                                   {-2, -4, -1, -1, -4, -3, 2,  -2, 3,  -3, 0,  0,  0,  1,  6,  0,  -1, -2, 2,  -4},
+                                   {1,  0,  0,  0,  -3, 1,  -1, -1, 0,  -3, -2, 1,  1,  -1, 0,  2,  1,  -1, -2, -3},
+                                   {1,  -2, 0,  0,  -3, 0,  -1, 0,  0,  -2, -1, 0,  0,  -1, -1, 1,  3,  0,  -5, -3},
+                                   {0,  -2, -2, -2, -1, -1, -2, 4,  -2, 2,  2,  -2, -1, -2, -2, -1, 0,  4,  -6, -2},
+                                   {-6, -8, -7, -7, 0,  -7, -3, -5, -3, -2, -4, -4, -6, -5, 2,  -2, -5, -6, 17, 0},
+                                   {-3, 0,  -4, -4, 7,  -5, 0,  -1, -4, -1, -2, -2, -5, -4, -4, -3, -3, -2, 0,  10}});
 
     return make_pair<string, matrix<int>>("ACDEFGHIKLMNPQRSTVWY", std::move(the_matrix));
 }
@@ -326,27 +349,34 @@ ScoredAlignment best_scored_alignment(const string &string1,
                                       const string &string2,
                                       const matrix<int> &scoring_matrix,
                                       const string &alphabet,
-                                      int sigma) {
+                                      int sigma,
+                                      bool local = false) {
 
     auto scores = scoring_matrix_as_map(scoring_matrix, alphabet);
     int size1 = size(string1);
     int size2 = size(string2);
 
-    matrix<Direction> path(size1 + 1, size2 + 1);
-    auto dp = make_matrix(size1 + 1, size2 + 1, std::numeric_limits<int>::max());
+    auto dp = make_matrix(size1 + 1, size2 + 1, numeric_limits<int>::max());
+    matrix<pair<int, int>> previous(size1 + 1, size2 + 1);
+
+    // Initialize all previous coordinates to (-1, -1), useful for debugging
+    for (auto iter1 = previous.begin1(); iter1 != previous.end1(); ++iter1)
+        for (auto iter2 = iter1.begin(); iter2 != iter1.end(); ++iter2)
+            *iter2 = make_pair(-1, -1);
 
     // 'i' is row index (corresponding to string1) and 'j' is column index (corresponding to string2).
     dp(0, 0) = 0;
-    path(0, 0) = undefined;
 
     for (int i = 1; i <= size1; ++i) {
-        dp(i, 0) = dp(i - 1, 0) - sigma; // These are all deletions
-        path(i, 0) = down;
+        // These are all free rides in case of local alignment, otherwise deletions
+        dp(i, 0) = local ? 0 : dp(i - 1, 0) - sigma;
+        previous(i, 0) = local ? make_pair(0, 0) : make_pair(i - 1, 0);
     }
 
     for (int j = 1; j <= size2; ++j) {
-        dp(0, j) = dp(0, j - 1) - sigma; // These are all insertions
-        path(0, j) = right;
+        // These are all free rides in case of local alignment, otherwise insertions
+        dp(0, j) = local ? 0 : dp(0, j - 1) - sigma;
+        previous(0, j) = local ? make_pair(0, 0) : make_pair(0, j - 1);
     }
 
     for (int i = 1; i <= size1; ++i)
@@ -360,52 +390,66 @@ ScoredAlignment best_scored_alignment(const string &string1,
             int cost_from_left = dp(i, j - 1) - sigma;
             // Maximize the cost
             int the_argmax = argmax(cost_from_upper_left, cost_from_up, cost_from_left);
-            switch (the_argmax) {
-                case 0: // Diagonal
-                    dp(i, j) = cost_from_upper_left;
-                    path(i, j) = diagonal;
-                    break;
-                case 1: // Going down
-                    dp(i, j) = cost_from_up;
-                    path(i, j) = down;
-                    break;
-                case 2: // Going right
-                    dp(i, j) = cost_from_left;
-                    path(i, j) = right;
-                    break;
-                default:
-                    assert(false);
-            }
+            // Check if a free-ride from the source would be preferable
+            if (local && cost_from_left < 0 && cost_from_up < 0 && cost_from_upper_left < 0) {
+                dp(i, j) = 0;
+                previous(i, j) = make_pair(0, 0);
+            } else
+                switch (the_argmax) {
+                    case 0: // Diagonal
+                        dp(i, j) = cost_from_upper_left;
+                        // path(i, j) = diagonal;
+                        previous(i, j) = pair(i - 1, j - 1);
+                        break;
+                    case 1: // Going down
+                        dp(i, j) = cost_from_up;
+                        // path(i, j) = down;
+                        previous(i, j) = pair(i - 1, j);
+                        break;
+                    case 2: // Going right
+                        dp(i, j) = cost_from_left;
+                        // path(i, j) = right;
+                        previous(i, j) = pair(i, j - 1);
+                        break;
+                    default:
+                        assert(false);
+                }
         }
 
+    // Allow a free-ride to the sink from any other vertex
+    if (local) {
+        for (unsigned long i = 0; i <= size1; ++i)
+            for (unsigned long j = 0; j <= size2; ++j) {
+                if (i == size1 && j == size2)
+                    continue;
+                if (dp(i, j) > dp(size1, size2)) {
+                    dp(size1, size2) = dp(i, j);
+                    previous(size1, size2) = make_pair(i, j);
+                }
+            }
+    }
+
+    // Backtracking of the solution, to find the two aligned strings.
+    string alignment1, alignment2;
     int i = size1;
     int j = size2;
-
-    string alignment1, alignment2;
     while (i != 0 or j != 0) {
-        switch (path(i, j)) {
-            case down:
-                alignment1.insert(begin(alignment1), string1.at(i - 1));
-                alignment2.insert(begin(alignment2), '-');
-                --i;
-                break;
-            case right:
-                alignment2.insert(begin(alignment2), string2.at(j - 1));
-                alignment1.insert(begin(alignment1), '-');
-                --j;
-                break;
-            case diagonal:
+        int prev_i = previous(i, j).first;
+        int prev_j = previous(i, j).second;
+        if (prev_i < i && prev_j == j) {
+            alignment1.insert(begin(alignment1), string1.at(i - 1));
+            alignment2.insert(begin(alignment2), '-');
+        } else if (prev_i == i && prev_j < j) {
+            alignment2.insert(begin(alignment2), string2.at(j - 1));
+            alignment1.insert(begin(alignment1), '-');
+        } else if (prev_i < i && prev_j < j) {
+            if (!local || (dp(prev_i, prev_j) != dp(i, j))) {
                 alignment1.insert(begin(alignment1), string1.at(i - 1));
                 alignment2.insert(begin(alignment2), string2.at(j - 1));
-                --i;
-                --j;
-                break;
-            case undefined:
-                assert(false);
-                break;
-            default:
-                assert(false);
+            }
         }
+        i = prev_i;
+        j = prev_j;
     }
 
     ScoredAlignment res(dp(size1, size2), alignment1, alignment2);
@@ -430,4 +474,46 @@ TEST_CASE("best_scored_alignment") {
             "KHLGRRPTYGFPFWYMVWDFQCQD----D----KEQKFFCKPRHVPCTWLGCEVTDEMWMDLHVEVQPQFCLVRQEFWHIFPPFSSIYWMYFDPSDVNRIMHDD");
     REQUIRE(res.alignment2 ==
             "K-----PTYGFPFWYMDWDFQCQDEWKKEIRFCKEQKFFCKPRHVPCWWLGCEV-----MDLH--T--Q----R------Y--F----W------------H--");
+}
+
+int score_alignment(const string &s1,
+        const string &s2,
+        const pair<string, matrix<int>> &scoring_matrix,
+        const int sigma) {
+    assert(s1.size() == s2.size());
+    auto scores = scoring_matrix_as_map(scoring_matrix.second, scoring_matrix.first);
+    int score = 0;
+    for (unsigned long i = 0; i < s1.size(); ++i)
+        score += (s1.at(i) == '-' || s2.at(i) == '-') ? -sigma : scores[make_pair(s1.at(i), s2.at(i))];
+    return score;
+}
+
+TEST_CASE("best_scored_alignment (local)") {
+    auto alphabet_scores = get_pam250();
+    auto alphabet = alphabet_scores.first;
+    auto scores = alphabet_scores.second;
+
+    auto res = best_scored_alignment("AMMY", "PMMTN", scores, alphabet, 5, true);
+    auto score = score_alignment(res.alignment1, res.alignment2, alphabet_scores, 5);
+    REQUIRE(res.score == 13);
+    REQUIRE(score == res.score);
+    REQUIRE(res.alignment1 == "AMM");
+    REQUIRE(res.alignment2 == "PMM");
+
+    res = best_scored_alignment("MEANLY", "PENALTY", scores, alphabet, 5, true);
+    score = score_alignment(res.alignment1, res.alignment2, alphabet_scores, 5);
+    REQUIRE(res.score == 15);
+    REQUIRE(score == res.score);
+    REQUIRE(res.alignment1 == "EL-Y");
+    REQUIRE(res.alignment2 == "ELTY");
+
+    res = best_scored_alignment(
+            "AMTAFRYRQGNPRYVKHFAYEIRLSHIWLLTQMPWEFVMGIKMPEDVFQHWRVYSVCTAEPMRSDETYPCELFTVFDDIFTAEPVVCSCFYDDPM",
+            "WQEKAVDGTVPSRHQYREKEDRQGNEIGKEFRRGPQVCEYSCNSHSCGWMPIFCIVCMSYVAFYCGLEYPMSRKTAKSQFIEWCDWFCFNHEFIPWVLRRYVVYDKIRYNYSYRNSASMEFV",
+            scores, alphabet, 5, true);
+    score = score_alignment(res.alignment1, res.alignment2, alphabet_scores, 5);
+    REQUIRE(res.score == 56);
+    REQUIRE(score == res.score);
+    REQUIRE(res.alignment1 == "QGPYVKHFYEIRLHIWLLQMWEFVGIKMPE-VFQH---W-VYSVCEPMSDTYPCL-FVFDFAEPVV-C--CFYDD");
+    REQUIRE(res.alignment2 == "DGV-SRH-Y--REEDRQGEIKEFRGPQVCEYCNSHSCGWMIF--C-CMYVFY-CLEYMSRASQFIEWCWFCFNHE");
 }

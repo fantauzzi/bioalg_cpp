@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 #include <unordered_map>
+#include <set>
 #include <boost/functional/hash.hpp>
 
 #define CATCH_CONFIG_MAIN
@@ -20,6 +21,7 @@ using std::string;
 using std::pair, std::make_pair;
 using std::unordered_map;
 using std::numeric_limits;
+using std::set;
 
 enum Direction {
     undefined, right, down, diagonal
@@ -477,9 +479,9 @@ TEST_CASE("best_scored_alignment") {
 }
 
 int score_alignment(const string &s1,
-        const string &s2,
-        const pair<string, matrix<int>> &scoring_matrix,
-        const int sigma) {
+                    const string &s2,
+                    const pair<string, matrix<int>> &scoring_matrix,
+                    const int sigma) {
     assert(s1.size() == s2.size());
     auto scores = scoring_matrix_as_map(scoring_matrix.second, scoring_matrix.first);
     int score = 0;
@@ -516,4 +518,49 @@ TEST_CASE("best_scored_alignment (local)") {
     REQUIRE(score == res.score);
     REQUIRE(res.alignment1 == "QGPYVKHFYEIRLHIWLLQMWEFVGIKMPE-VFQH---W-VYSVCEPMSDTYPCL-FVFDFAEPVV-C--CFYDD");
     REQUIRE(res.alignment2 == "DGV-SRH-Y--REEDRQGEIKEFRGPQVCEYCNSHSCGWMIF--C-CMYVFY-CLEYMSRASQFIEWCWFCFNHE");
+}
+
+int edit_distance(const string &string1, const string &string2) {
+    const int sigma = 1;
+
+    string all_characters = string1 + string2;
+    set<char> characters(all_characters.begin(), all_characters.end());
+    string alphabet(characters.begin(), characters.end());
+
+    auto scoring_matrix = make_matrix(alphabet.size(), alphabet.size(), -1);
+    for (unsigned long i = 0; i < alphabet.size(); ++i)
+        for (unsigned long j = 0; j < alphabet.size(); ++j)
+            if (alphabet.at(i) == alphabet.at(j))
+                scoring_matrix(i, j) = 0;
+
+    auto score_alignment = best_scored_alignment(string1,
+                                                 string2,
+                                                 scoring_matrix,
+                                                 alphabet,
+                                                 sigma,
+                                                 false);
+
+    return -score_alignment.score;
+}
+
+TEST_CASE("edit_distance") {
+    auto dist = edit_distance("PLEASANTLY", "MEANLY");
+    REQUIRE(dist == 5);
+
+    auto s1 = "GGACRNQMSEVNMWGCWWASVWVSWCEYIMPSGWRRMKDRHMWHWSVHQQSSPCAKSICFHETKNQWNQDACGPKVTQHECMRRRLVIAVKEE";
+    auto s2 = "GMWGFVQVSTQSRFRHMWHWSVHQQSSECAKSICHHEWKNQWNQDACGPKVTQHECMANMPMHKCNNWFWRLVIAVKEEKVRETKMLDLIHRHWLVLNQGRMNEHNVTLRKSPCVKRIMHKWKSRTTFHR";
+    dist = edit_distance(s1, s2);
+    REQUIRE(dist == 97);
+
+    dist = edit_distance("AC", "AC");
+    REQUIRE(dist == 0);
+
+    dist = edit_distance("AT", "G");
+    REQUIRE(dist == 2);
+
+    dist = edit_distance("CAGACCGAGTTAG", "CGG");
+    REQUIRE(dist == 10);
+
+    dist = edit_distance("CGT", "CAGACGGTGACG");
+    REQUIRE(dist == 9);
 }

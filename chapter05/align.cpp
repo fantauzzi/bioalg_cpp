@@ -211,121 +211,6 @@ pair<string, matrix<int>> get_pam250() {
     return make_pair<string, matrix<int>>("ACDEFGHIKLMNPQRSTVWY", std::move(the_matrix));
 }
 
-TEST_CASE("make_matrix") {
-    matrix<int> down = make_matrix({{1, 0, 2, 4, 3},
-                                    {4, 6, 5, 2, 1},
-                                    {4, 4, 5, 2, 1},
-                                    {5, 6, 8, 5, 3}});
-
-    // By row...
-    vector<int> by_row;
-    for (auto iter1 = down.begin1(); iter1 != down.end1(); ++iter1)
-        for (auto iter2 = iter1.begin(); iter2 != iter1.end(); ++iter2)
-            by_row.emplace_back(*iter2);
-    REQUIRE(by_row == vector<int>({1, 0, 2, 4, 3, 4, 6, 5, 2, 1, 4, 4, 5, 2, 1, 5, 6, 8, 5, 3}));
-
-    // By column...
-    vector<int> by_column;
-    for (auto iter2 = down.begin2(); iter2 != down.end2(); ++iter2)
-        for (auto iter1 = iter2.begin(); iter1 != iter2.end(); ++iter1)
-            by_column.emplace_back(*iter1);
-    REQUIRE(by_column == vector<int>({1, 4, 4, 5, 0, 6, 4, 6, 2, 5, 5, 8, 4, 2, 2, 5, 3, 1, 1, 3}));
-
-    auto the_matrix = make_matrix(3, 4, -1);
-    REQUIRE(the_matrix.size1() == 3);
-    REQUIRE(the_matrix.size2() == 4);
-    for (int i = 0; i < 3; ++i)
-        for (int j = 0; j < 4; ++j)
-            REQUIRE(the_matrix(i, j) == -1);
-
-}
-
-TEST_CASE("manhattan_tourist") {
-    matrix<int> down = make_matrix({{1, 0, 2, 4, 3},
-                                    {4, 6, 5, 2, 1},
-                                    {4, 4, 5, 2, 1},
-                                    {5, 6, 8, 5, 3}});
-
-    /*cout << endl;
-    for (auto iter1 = down.begin1(); iter1 != down.end1(); ++iter1)
-        for (auto iter2 = iter1.begin(); iter2 != iter1.end(); ++iter2)
-            cout << *iter2 << " ";
-
-    cout << endl;
-    for (auto iter2 = down.begin2(); iter2 != down.end2(); ++iter2)
-        for (auto iter1 = iter2.begin(); iter1 != iter2.end(); ++iter1)
-            cout << *iter1 << " "; */
-
-    matrix<int> right = make_matrix({{3, 2, 4, 0},
-                                     {3, 2, 4, 2},
-                                     {0, 7, 3, 3},
-                                     {3, 3, 0, 2},
-                                     {1, 3, 2, 2}});
-    REQUIRE(manhattan_tourist(down, right) == 34);
-
-    down = make_matrix({{4, 4, 2, 1, 3, 1, 0, 0, 1},
-                        {4, 3, 0, 2, 0, 4, 3, 4, 4},
-                        {2, 3, 3, 1, 2, 1, 2, 2, 0},
-                        {3, 0, 3, 3, 2, 1, 1, 3, 4},
-                        {2, 3, 1, 2, 2, 0, 2, 3, 2},
-                        {2, 2, 2, 0, 4, 2, 1, 0, 3},
-                        {4, 3, 1, 1, 0, 1, 1, 4, 2},
-                        {0, 0, 2, 2, 2, 1, 2, 4, 2},
-                        {4, 3, 0, 3, 1, 3, 2, 3, 1},
-                        {1, 4, 1, 0, 3, 4, 1, 2, 1},
-                        {4, 4, 0, 4, 1, 4, 3, 1, 2},
-                        {4, 1, 2, 3, 1, 3, 3, 3, 0},
-                        {3, 1, 0, 2, 2, 0, 4, 4, 0},
-                        {2, 0, 1, 0, 0, 3, 1, 1, 1},
-                        {0, 1, 3, 2, 2, 2, 1, 2, 1},
-                        {0, 2, 0, 3, 1, 2, 2, 4, 2},
-                        {2, 0, 4, 1, 3, 3, 2, 4, 0},
-                        {2, 3, 1, 3, 4, 2, 1, 4, 4}});
-
-
-    right = make_matrix({{3, 3, 1, 1, 3, 4, 4, 4},
-                         {4, 0, 3, 1, 0, 3, 4, 4},
-                         {2, 2, 2, 3, 3, 1, 1, 4},
-                         {1, 3, 1, 4, 4, 2, 0, 1},
-                         {0, 2, 0, 3, 3, 3, 1, 0},
-                         {3, 2, 0, 4, 1, 4, 4, 3},
-                         {3, 0, 1, 1, 0, 3, 3, 0},
-                         {3, 1, 1, 0, 2, 3, 4, 0},
-                         {2, 4, 2, 1, 1, 3, 1, 2},
-                         {1, 0, 4, 3, 0, 3, 3, 0},
-                         {2, 3, 2, 4, 4, 3, 3, 0},
-                         {3, 1, 2, 0, 3, 4, 3, 2},
-                         {0, 0, 4, 1, 4, 0, 3, 4},
-                         {3, 2, 3, 2, 0, 1, 2, 1},
-                         {4, 3, 3, 2, 0, 1, 1, 2},
-                         {0, 0, 4, 1, 2, 4, 0, 3},
-                         {3, 4, 0, 1, 2, 3, 0, 1},
-                         {4, 0, 2, 4, 2, 2, 4, 0},
-                         {4, 3, 4, 2, 2, 3, 2, 3}});
-    REQUIRE(manhattan_tourist(down, right) == 80);
-}
-
-
-TEST_CASE("align") {
-    REQUIRE(dp_change(40, {50, 25, 20, 10, 5, 1}) == 2);
-    REQUIRE(dp_change(19415, {18, 16, 7, 5, 3, 1}) == 1080);
-    REQUIRE(dp_change(16042, {16, 13, 11, 8, 7, 5, 3, 1}) == 1003);
-
-}
-
-TEST_CASE("longest_common_string") {
-    REQUIRE(longest_common_string("ACGATACGT", "CCCATTAAGT") == "CATAGT");
-    REQUIRE(longest_common_string("ACGATACGT", "GACTATAGAA") == "ACATAG");
-    REQUIRE(longest_common_string("CCCATTAAGT", "GACTATAGAA") == "CATAA");
-    REQUIRE(longest_common_string("CTCGAT", "TACGTC") == "TCGT");
-    REQUIRE(longest_common_string("ATGTTATA", "ATCGTCC") == "ATGT");
-    REQUIRE(longest_common_string("AACCTTGG", "ACACTGTGA") == "AACTTG");
-
-    string s1 = "AGCAGTTCCCTGATTGTTTAGTATTTGACTCCGTAGTTGAGCCTATATCGTAATTCTGCCAAGGAA";
-    string s2 = "ATTATAATCCCCCGGACAAGAACCTAGTGGGCGCGTGGGACGGGACAAGAGCGACGTTCCGTAGGTGTGAGAGCCGTACTCAATTTTGGTTATTACCAT";
-    REQUIRE(longest_common_string(s1, s2) == "AATTCCCGATTGTAGAGACTCCGTAGTTGAGCCTATATGTATTCCA");
-}
-
 struct ScoredAlignment {
     int score;
     string alignment1;
@@ -400,17 +285,14 @@ ScoredAlignment best_scored_alignment(const string &string1,
                 switch (the_argmax) {
                     case 0: // Diagonal
                         dp(i, j) = cost_from_upper_left;
-                        // path(i, j) = diagonal;
                         previous(i, j) = pair(i - 1, j - 1);
                         break;
                     case 1: // Going down
                         dp(i, j) = cost_from_up;
-                        // path(i, j) = down;
                         previous(i, j) = pair(i - 1, j);
                         break;
                     case 2: // Going right
                         dp(i, j) = cost_from_left;
-                        // path(i, j) = right;
                         previous(i, j) = pair(i, j - 1);
                         break;
                     default:
@@ -458,10 +340,139 @@ ScoredAlignment best_scored_alignment(const string &string1,
     return res;
 }
 
+int edit_distance(const string &string1, const string &string2) {
+    const int sigma = 1;
+
+    string all_characters = string1 + string2;
+    set<char> characters(all_characters.begin(), all_characters.end());
+    string alphabet(characters.begin(), characters.end());
+
+    auto scoring_matrix = make_matrix(alphabet.size(), alphabet.size(), -1);
+    for (unsigned long i = 0; i < alphabet.size(); ++i)
+        for (unsigned long j = 0; j < alphabet.size(); ++j)
+            if (alphabet.at(i) == alphabet.at(j))
+                scoring_matrix(i, j) = 0;
+
+    auto score_alignment = best_scored_alignment(string1,
+                                                 string2,
+                                                 scoring_matrix,
+                                                 alphabet,
+                                                 sigma,
+                                                 false);
+
+    return -score_alignment.score;
+}
+
+TEST_CASE("make_matrix") {
+    matrix<int> down = make_matrix({{1, 0, 2, 4, 3},
+                                    {4, 6, 5, 2, 1},
+                                    {4, 4, 5, 2, 1},
+                                    {5, 6, 8, 5, 3}});
+
+    // By row...
+    vector<int> by_row;
+    for (auto iter1 = down.begin1(); iter1 != down.end1(); ++iter1)
+        for (auto iter2 = iter1.begin(); iter2 != iter1.end(); ++iter2)
+            by_row.emplace_back(*iter2);
+    REQUIRE(by_row == vector<int>({1, 0, 2, 4, 3, 4, 6, 5, 2, 1, 4, 4, 5, 2, 1, 5, 6, 8, 5, 3}));
+
+    // By column...
+    vector<int> by_column;
+    for (auto iter2 = down.begin2(); iter2 != down.end2(); ++iter2)
+        for (auto iter1 = iter2.begin(); iter1 != iter2.end(); ++iter1)
+            by_column.emplace_back(*iter1);
+    REQUIRE(by_column == vector<int>({1, 4, 4, 5, 0, 6, 4, 6, 2, 5, 5, 8, 4, 2, 2, 5, 3, 1, 1, 3}));
+
+    auto the_matrix = make_matrix(3, 4, -1);
+    REQUIRE(the_matrix.size1() == 3);
+    REQUIRE(the_matrix.size2() == 4);
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 4; ++j)
+            REQUIRE(the_matrix(i, j) == -1);
+
+}
+
+TEST_CASE("manhattan_tourist") {
+    matrix<int> down = make_matrix({{1, 0, 2, 4, 3},
+                                    {4, 6, 5, 2, 1},
+                                    {4, 4, 5, 2, 1},
+                                    {5, 6, 8, 5, 3}});
+
+    matrix<int> right = make_matrix({{3, 2, 4, 0},
+                                     {3, 2, 4, 2},
+                                     {0, 7, 3, 3},
+                                     {3, 3, 0, 2},
+                                     {1, 3, 2, 2}});
+    REQUIRE(manhattan_tourist(down, right) == 34);
+
+    down = make_matrix({{4, 4, 2, 1, 3, 1, 0, 0, 1},
+                        {4, 3, 0, 2, 0, 4, 3, 4, 4},
+                        {2, 3, 3, 1, 2, 1, 2, 2, 0},
+                        {3, 0, 3, 3, 2, 1, 1, 3, 4},
+                        {2, 3, 1, 2, 2, 0, 2, 3, 2},
+                        {2, 2, 2, 0, 4, 2, 1, 0, 3},
+                        {4, 3, 1, 1, 0, 1, 1, 4, 2},
+                        {0, 0, 2, 2, 2, 1, 2, 4, 2},
+                        {4, 3, 0, 3, 1, 3, 2, 3, 1},
+                        {1, 4, 1, 0, 3, 4, 1, 2, 1},
+                        {4, 4, 0, 4, 1, 4, 3, 1, 2},
+                        {4, 1, 2, 3, 1, 3, 3, 3, 0},
+                        {3, 1, 0, 2, 2, 0, 4, 4, 0},
+                        {2, 0, 1, 0, 0, 3, 1, 1, 1},
+                        {0, 1, 3, 2, 2, 2, 1, 2, 1},
+                        {0, 2, 0, 3, 1, 2, 2, 4, 2},
+                        {2, 0, 4, 1, 3, 3, 2, 4, 0},
+                        {2, 3, 1, 3, 4, 2, 1, 4, 4}});
+
+
+    right = make_matrix({{3, 3, 1, 1, 3, 4, 4, 4},
+                         {4, 0, 3, 1, 0, 3, 4, 4},
+                         {2, 2, 2, 3, 3, 1, 1, 4},
+                         {1, 3, 1, 4, 4, 2, 0, 1},
+                         {0, 2, 0, 3, 3, 3, 1, 0},
+                         {3, 2, 0, 4, 1, 4, 4, 3},
+                         {3, 0, 1, 1, 0, 3, 3, 0},
+                         {3, 1, 1, 0, 2, 3, 4, 0},
+                         {2, 4, 2, 1, 1, 3, 1, 2},
+                         {1, 0, 4, 3, 0, 3, 3, 0},
+                         {2, 3, 2, 4, 4, 3, 3, 0},
+                         {3, 1, 2, 0, 3, 4, 3, 2},
+                         {0, 0, 4, 1, 4, 0, 3, 4},
+                         {3, 2, 3, 2, 0, 1, 2, 1},
+                         {4, 3, 3, 2, 0, 1, 1, 2},
+                         {0, 0, 4, 1, 2, 4, 0, 3},
+                         {3, 4, 0, 1, 2, 3, 0, 1},
+                         {4, 0, 2, 4, 2, 2, 4, 0},
+                         {4, 3, 4, 2, 2, 3, 2, 3}});
+    REQUIRE(manhattan_tourist(down, right) == 80);
+}
+
+
+TEST_CASE("align") {
+    REQUIRE(dp_change(40, {50, 25, 20, 10, 5, 1}) == 2);
+    REQUIRE(dp_change(19415, {18, 16, 7, 5, 3, 1}) == 1080);
+    REQUIRE(dp_change(16042, {16, 13, 11, 8, 7, 5, 3, 1}) == 1003);
+
+}
+
+TEST_CASE("longest_common_string") {
+    REQUIRE(longest_common_string("ACGATACGT", "CCCATTAAGT") == "CATAGT");
+    REQUIRE(longest_common_string("ACGATACGT", "GACTATAGAA") == "ACATAG");
+    REQUIRE(longest_common_string("CCCATTAAGT", "GACTATAGAA") == "CATAA");
+    REQUIRE(longest_common_string("CTCGAT", "TACGTC") == "TCGT");
+    REQUIRE(longest_common_string("ATGTTATA", "ATCGTCC") == "ATGT");
+    REQUIRE(longest_common_string("AACCTTGG", "ACACTGTGA") == "AACTTG");
+
+    string s1 = "AGCAGTTCCCTGATTGTTTAGTATTTGACTCCGTAGTTGAGCCTATATCGTAATTCTGCCAAGGAA";
+    string s2 = "ATTATAATCCCCCGGACAAGAACCTAGTGGGCGCGTGGGACGGGACAAGAGCGACGTTCCGTAGGTGTGAGAGCCGTACTCAATTTTGGTTATTACCAT";
+    REQUIRE(longest_common_string(s1, s2) == "AATTCCCGATTGTAGAGACTCCGTAGTTGAGCCTATATGTATTCCA");
+}
+
 TEST_CASE("best_scored_alignment") {
-    auto alphabet_scores = get_blosum62();
-    auto alphabet = alphabet_scores.first;
-    auto scores = alphabet_scores.second;
+    // auto alphabet_scores = get_blosum62();
+    auto[alphabet, scores] = get_blosum62();
+    // auto alphabet = alphabet_scores.first;
+    // auto scores = alphabet_scores.second;
 
     auto res = best_scored_alignment("PLEASANTLY", "MEANLY", scores, alphabet, 5);
     REQUIRE(res.score == 8);
@@ -491,12 +502,11 @@ int score_alignment(const string &s1,
 }
 
 TEST_CASE("best_scored_alignment (local)") {
-    auto alphabet_scores = get_pam250();
-    auto alphabet = alphabet_scores.first;
-    auto scores = alphabet_scores.second;
+    const auto alphabet_scores = get_pam250();
+    const auto[alphabet, scores] = alphabet_scores;
 
     auto res = best_scored_alignment("AMMY", "PMMTN", scores, alphabet, 5, true);
-    auto score = score_alignment(res.alignment1, res.alignment2, alphabet_scores, 5);
+    auto score = score_alignment(res.alignment1, res.alignment2, make_pair(alphabet, scores), 5);
     REQUIRE(res.score == 13);
     REQUIRE(score == res.score);
     REQUIRE(res.alignment1 == "AMM");
@@ -518,29 +528,6 @@ TEST_CASE("best_scored_alignment (local)") {
     REQUIRE(score == res.score);
     REQUIRE(res.alignment1 == "QGPYVKHFYEIRLHIWLLQMWEFVGIKMPE-VFQH---W-VYSVCEPMSDTYPCL-FVFDFAEPVV-C--CFYDD");
     REQUIRE(res.alignment2 == "DGV-SRH-Y--REEDRQGEIKEFRGPQVCEYCNSHSCGWMIF--C-CMYVFY-CLEYMSRASQFIEWCWFCFNHE");
-}
-
-int edit_distance(const string &string1, const string &string2) {
-    const int sigma = 1;
-
-    string all_characters = string1 + string2;
-    set<char> characters(all_characters.begin(), all_characters.end());
-    string alphabet(characters.begin(), characters.end());
-
-    auto scoring_matrix = make_matrix(alphabet.size(), alphabet.size(), -1);
-    for (unsigned long i = 0; i < alphabet.size(); ++i)
-        for (unsigned long j = 0; j < alphabet.size(); ++j)
-            if (alphabet.at(i) == alphabet.at(j))
-                scoring_matrix(i, j) = 0;
-
-    auto score_alignment = best_scored_alignment(string1,
-                                                 string2,
-                                                 scoring_matrix,
-                                                 alphabet,
-                                                 sigma,
-                                                 false);
-
-    return -score_alignment.score;
 }
 
 TEST_CASE("edit_distance") {

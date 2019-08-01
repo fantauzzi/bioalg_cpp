@@ -50,7 +50,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="preferences.editor" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -97,6 +97,7 @@
       <workItem from="1564506177428" duration="4659000" />
       <workItem from="1564565196423" duration="5451000" />
       <workItem from="1564597358064" duration="4434000" />
+      <workItem from="1564651126242" duration="4554000" />
     </task>
     <servers />
   </component>
